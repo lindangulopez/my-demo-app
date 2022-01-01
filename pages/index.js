@@ -14,6 +14,8 @@ function HomePage(props) {
     const enteredEmail = emailInputRef.current.value;
     const enteredFeedback = feedbackInputRef.current.value;
 
+    fetch(); // { email: 'test@test.com', text:'user feedback text'}
+
   }
 
 
