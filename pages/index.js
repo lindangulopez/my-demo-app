@@ -1,54 +1,78 @@
 import Head from 'next/head';
-import {useRef} from 'react';
+import { useRef, useState } from 'react';
 
 import { getFeaturedEvents } from '../helpers/api-util';
 import EventList from '../components/events/event-list';
 
 function HomePage(props) {
+  const [feedbackItems, setFeedbackItems] = useState([]);
+
   const emailInputRef = useRef();
   const feedbackInputRef = useRef();
 
-  function submitFormHandler(event){
+  function submitFormHandler(event) {
     event.preventDefault();
 
     const enteredEmail = emailInputRef.current.value;
     const enteredFeedback = feedbackInputRef.current.value;
 
-    fetch(); // { email: 'test@test.com', text:'user feedback text'}
+    const reqBody = { email: enteredEmail, text: enteredFeedback };
 
+    fetch('/api/feedback', {
+      method: 'POST',
+      body: JSON.stringify(reqBody),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data));
   }
 
+  function loadFeedbackHandler() {
+    fetch('/api/feedback')
+      .then((response) => response.json())
+      .then((data) => {
+        setFeedbackItems(data.feedback);
+      });
+  }
 
-
-  return (
-    <div>
-    <Head>
+  return (<>
+  <div>
+      <Head>
       <title>NextJS Events</title>
       <meta
         name='description'
         content='Events to build your Next.JS skills'
       />
     </Head>
+
     <div className='center'>
       <h1>The Home Page</h1>
       <form onSubmit={submitFormHandler}>
         <div>
-          <label htmlFor='feedback'>Please submit your Feedback.</label>
+          <label htmlFor='email'>Your Email Address</label>
           <br/>
-          <textarea id='feedback' rows='15'ref={feedbackInputRef}></textarea>
+          <input type='email' id='email' ref={emailInputRef} />
         </div>
-        <br/>
         <div>
-          <label htmlFor='email'>Enter a valid Email Address.</label>
+          <label htmlFor='feedback'>Your Feedback</label>
           <br/>
-          <input type='email' id='email'ref={emailInputRef} />
+          <textarea id='feedback' rows='5' ref={feedbackInputRef}></textarea>
         </div>
-        <br/>
         <button>Send Feedback</button>
       </form>
+      <hr />
+      <button onClick={loadFeedbackHandler}>Load Feedback</button>
+      <ul>
+        {feedbackItems.map((item) => (
+          <li key={item.id}>{item.text}</li>
+        ))}
+      </ul>
     </div>
-      <EventList items={props.events} />
+    <EventList items={props.events} />
     </div>
+    </>
   );
 }
 
