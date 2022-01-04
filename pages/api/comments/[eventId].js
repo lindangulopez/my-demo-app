@@ -31,6 +31,7 @@ function handler(req, res) {
 	  const dummyList = [
 	    { id: 'c1', name: 'Max', text: 'A first comment!' },
 	    { id: 'c2', name: 'Linda', text: 'A second comment!' },
+	    { id: 'c3', name: 'Mary', text: 'A third comment!' },
 	  ];
       
 	  res.status(200).json({ comments: dummyList });
